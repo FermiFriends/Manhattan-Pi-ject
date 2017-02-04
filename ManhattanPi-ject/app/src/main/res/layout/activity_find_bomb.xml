@@ -10,30 +10,34 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.fermifriends.manhattanpi_ject.FindBombActivity">
 
-    <ProgressBar
-        android:id="@+id/signalStrengthBar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="200dp"
-        android:maxWidth="50dp"
-        android:progress="50"
-        android:rotation="-90"
-        android:scaleY="10" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/disarmButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="disarmBomb"
-        android:text="@string/disarm"
-        android:visibility="visible"
-        android:layout_marginBottom="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        <ProgressBar
+            android:id="@+id/bluetoothStrengthBar"
+            style="@style/Widget.ProgressBar.Vertical"
+            android:layout_height="300dip"
+            android:progress="50"
+            android:layout_width="30dp"
+            android:layout_centerHorizontal="false"
+            android:layout_weight="1"
+            android:layout_gravity="center" />
+
+        <Button
+            android:id="@+id/disarmButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="disarmBomb"
+            android:text="@string/disarm"
+            android:visibility="visible"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp" />
+    </LinearLayout>
 
 
 </RelativeLayout>
