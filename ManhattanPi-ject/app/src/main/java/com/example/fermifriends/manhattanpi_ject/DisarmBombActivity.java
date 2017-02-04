@@ -15,8 +15,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class DisarmBombActivity extends AppCompatActivity {
-    public static int NUM_SECONDS_FOR_READ_TIMEOUT = 15;
-    public static int NUM_TICKS_PER_SECOND = 1000;
+    private static final int NUM_SECONDS_FOR_READ_TIMEOUT = 10;
+    private static final int NUM_TICKS_PER_SECOND = 1000;
+    private static final String SERVER_URL = "http://129.31.192.121:5000/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class DisarmBombActivity extends AppCompatActivity {
 
     public void getData(View view) {
         AsyncHttpTask asyncHttpTask = new AsyncHttpTask();
-        asyncHttpTask.execute("http://129.31.192.121:5000/");
+        asyncHttpTask.execute(SERVER_URL);
     }
 
 
@@ -34,40 +35,45 @@ public class DisarmBombActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            InputStream inputStream = null;
             String res = "";
             try {
                 String url = params[0];
-                res = connectToServer(url);
+                res = parseInputStream(getInputStreamFromServer(url));
             } catch (Exception e) {
                 Log.d("", e.getLocalizedMessage());
             }
             return res;
         }
 
-        public String connectToServer(String urlString) throws Exception {
-            URL url = null;
-            BufferedReader reader = null;
-            StringBuilder sb;
-
+        private InputStream getInputStreamFromServer(String urlString) throws Exception {
             try {
-                url = new URL(urlString);
+                URL url = new URL(urlString);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(NUM_SECONDS_FOR_READ_TIMEOUT * NUM_TICKS_PER_SECOND);
                 connection.connect();
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                sb = new StringBuilder();
-                String line = null;
+                return connection.getInputStream();
+            } catch (Exception e) {
+                Log.d("", e.getLocalizedMessage());
+                return null;
+            }
+        }
+
+        private String parseInputStream(InputStream inputStream) {
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder sb = new StringBuilder();
+                String line;
                 while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
+                    sb.append(line);
                 }
                 return sb.toString();
             } catch (Exception e) {
-                Log.d("", e.getLocalizedMessage());
-                return "";
+                e.printStackTrace();
+                return null;
             } finally {
-                if  (reader != null) {
+                if (reader != null) {
                     try {
                         reader.close();
                     } catch (IOException e) {
@@ -75,16 +81,17 @@ public class DisarmBombActivity extends AppCompatActivity {
                     }
                 }
             }
+
         }
 
         @Override
         protected void onPostExecute(String result) {
-            DisarmBombActivity.this.updateData(result);
+            updateData(result);
         }
     }
 
-    public void updateData(String string) {
-        TextView tv = (TextView) findViewById(R.id.textView);
-        tv.setText(string);
+    private void updateData(String string) {
+        TextView textView = (TextView) findViewById(R.id.textView);
+        textView.setText(string);
     }
 }
