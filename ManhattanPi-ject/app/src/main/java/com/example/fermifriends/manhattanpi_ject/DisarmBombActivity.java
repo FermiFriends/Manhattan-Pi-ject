@@ -1,6 +1,7 @@
 package com.example.fermifriends.manhattanpi_ject;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,16 +14,37 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DisarmBombActivity extends AppCompatActivity {
     private static final int NUM_SECONDS_FOR_READ_TIMEOUT = 10;
     private static final int NUM_TICKS_PER_SECOND = 1000;
-    private static final String SERVER_URL = "http://129.31.192.121:5000/";
+    private static final String SERVER_URL = "http://http://129.31.192.121:5000/test";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disarm_bomb);
+        callAsynchronousTask();
+    }
+
+    public void callAsynchronousTask() {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask getDataRegularly = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AsyncHttpTask asyncHttpTask = new AsyncHttpTask();
+                        asyncHttpTask.execute(SERVER_URL);
+                    }
+                });
+            }
+        };
+        timer.scheduleAtFixedRate(getDataRegularly, 0, 1000);
     }
 
     public void getData(View view) {
