@@ -1,11 +1,21 @@
-from flask import Flask
+from flask import Flask, request
 
 
 app = Flask(__name__)
 
+@app.route('/test')
+def test():
+    # TODO
+    return 'test page pls ignore'
 
-@app.route('/')
-def hello_world():
+@app.route('/', methods=['POST'])
+def arm_bomb():
+    # TODO
+    return 'Hello, World!'
+
+@app.route('/status')
+def get_status():
+    # TODO
     return 'Hello, World!'
 
 
