@@ -20,7 +20,7 @@ import java.util.TimerTask;
 public class DisarmBombActivity extends AppCompatActivity {
     private static final int NUM_SECONDS_FOR_READ_TIMEOUT = 10;
     private static final int NUM_TICKS_PER_SECOND = 1000;
-    private static final String SERVER_URL = "http://http://129.31.192.121:5000/test";
+    private static final String SERVER_URL = "http://129.31.192.121:5000/test";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
