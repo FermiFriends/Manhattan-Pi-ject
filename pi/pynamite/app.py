@@ -1,22 +1,33 @@
+import flask
 from flask import Flask, request
+import json
 
 
 app = Flask(__name__)
 
-@app.route('/test')
-def test():
-    # TODO
-    return 'test page pls ignore'
 
 @app.route('/', methods=['POST'])
 def arm_bomb():
-    # TODO
-    return 'Hello, World!'
+
+    if flask.g.bomb_session is not None:
+        kill_bomb_session(flask.g.bomb_session)
+
+    options = request.get_json()
+
+    flask.g.bomb_session = start_bomb_session(options)
+
+    return "", 200
+
 
 @app.route('/status')
 def get_status():
-    # TODO
-    return 'Hello, World!'
+    return json.dumps(session_status(flask.g.bomb_session)), 200
+
+
+
+@app.route('/test')
+def test():
+    return 'test endpoint pls ignore'
 
 
 if __name__ == '__main__':
