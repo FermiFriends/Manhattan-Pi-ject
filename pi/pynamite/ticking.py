@@ -3,6 +3,10 @@ import time
 import threading
 
 """
+Manages the displaying the time on the 7-segment
+display and plaing beeping audio.
+
+7-seven segment display settings:
     0
     _
  1 | | 3 
@@ -12,7 +16,6 @@ import threading
 
 PIN 2-8 = segments
 PIN 9-12 = GND
-
 """
 pin_offset = 2
 delay_time = .004 # s
@@ -57,6 +60,8 @@ def display(_time, stahp):
             number = number / 10
             display_digit(digit, position)
 
+    GPIO.cleanup()
+
 def display_digit(digit, position):
     segments = digit_segments[digit]
 
@@ -68,12 +73,19 @@ def display_digit(digit, position):
     time.sleep(delay_time)
     GPIO.output(pin_offset + position + 1 + 6, 1)
 
+
 def countdown(time_limit, stahp):
     setup()
 
     display(time_limit, stahp)
 
-    GPIO.cleanup()
+
+def start_ticking(time_limit):
+    ticking_stopper = threading.Event()
+    t = threading.Thread(target=countdown, args=(time_limit, ticking_stopper))
+    t.start()
+    return ticking_stopper
+
 
 if __name__ == '__main__':
     e = threading.Event()
@@ -81,8 +93,3 @@ if __name__ == '__main__':
     t.start()
     time.sleep(5)
     e.set()
-
-#    try:
-#        countdown(9999)
-#    except KeyboardInterrupt:
-#        GPIO.cleanup()

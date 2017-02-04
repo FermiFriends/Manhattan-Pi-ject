@@ -1,6 +1,7 @@
 import flask
-from flask import Flask, request
+import bomb
 import json
+from flask import Flask, request
 
 
 app = Flask(__name__)
@@ -10,18 +11,18 @@ app = Flask(__name__)
 def arm_bomb():
 
     if flask.g.bomb_session is not None:
-        kill_bomb_session(flask.g.bomb_session)
+        bomb.kill_bomb_session(flask.g.bomb_session)
 
     options = request.get_json()
 
-    flask.g.bomb_session = start_bomb_session(options)
+    flask.g.bomb_session = bomb.start_bomb_session(options)
 
     return "", 200
 
 
 @app.route('/status')
 def get_status():
-    return json.dumps(session_status(flask.g.bomb_session)), 200
+    return json.dumps(bomb.session_status(flask.g.bomb_session)), 200
 
 
 
