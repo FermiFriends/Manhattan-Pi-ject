@@ -18,9 +18,4 @@ public class FindBombActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DisarmBombActivity.class);
         startActivity(intent);
     }
-
-    public void getData(View view) {
-        AsyncHttpTask asyncHttpTask = new AsyncHttpTask();
-        asyncHttpTask.execute("http://www.nikgupta.uk");
-    }
 }

@@ -18,4 +18,26 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:textSize="80sp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bombChronometer"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="57dp"
+        android:id="@+id/textView"
+        android:textSize="30dp" />
+
+    <Button
+        android:text="Poll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:id="@+id/button"
+        android:textSize="24dp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="getData" />
 </RelativeLayout>
