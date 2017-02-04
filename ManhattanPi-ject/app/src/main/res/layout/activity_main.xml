@@ -24,7 +24,6 @@
             android:text="Play"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="findBomb"
             android:id="@+id/playButton" />
 
         <Switch
