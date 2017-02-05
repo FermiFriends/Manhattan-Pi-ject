@@ -5,6 +5,7 @@ import time
 import serial
 import json
 import copy
+from ticking import beep
 
 def start_bomb_session(options):
     
@@ -71,6 +72,8 @@ def start_bomb_session(options):
     print(line)
     session['initial_readings'] = json.loads(line)
 
+    beep(1)
+
     return session
 
 def session_status(session):
@@ -116,10 +119,11 @@ def session_status(session):
         session['serial_stopper'].set()
 
         if state == "DISARMED":
-            # TODO: success feedback
+            #beep(1)
             pass
+
         elif state == "DETONATED":
-            # TODO: failure feedback
+            #beep(1)
             pass
 
     newstate = copy.copy(session['options'])
@@ -131,7 +135,6 @@ def session_status(session):
     newstate["ACTUAL_NOB_ANGLE"] = twisty/100
 
     return newstate
-    # TODO: return status as dict
 
     """
     Example status JSON:
@@ -162,7 +165,6 @@ def session_status(session):
         "ACTUAL_NOB_ANGLE": 2, # i.e. needs more rotation
     }
     """
-    pass
 
 def kill_bomb_session(session):
     session['ticking_stopper'].set()

@@ -20,6 +20,8 @@ PIN 9-12 = GND
 pin_offset = 2
 delay_time = .004 # s
 
+setup = False
+
 digit_segments = [
         [1, 1, 0, 1, 1, 1, 1],
         [0, 0, 0, 1, 0, 0, 1],
@@ -37,6 +39,15 @@ def setup():
     GPIO.setmode(GPIO.BCM)
     for i in range(2, 13):
         GPIO.setup(i, GPIO.OUT)
+    GPIO.setup(16, GPIO.OUT)
+
+
+
+def beep(duration):
+    setup()
+    GPIO.output(16, 1)
+    time.sleep(duration)
+    GPIO.output(16, 0)
 
 def display(_time, stahp):
     # Clamp
@@ -53,6 +64,8 @@ def display(_time, stahp):
         if current_time - start_time > ticks:
             _time -= 1
             ticks += 1
+            beep(0.2)
+
 
         number = _time
         for position in reversed(range(4)):
