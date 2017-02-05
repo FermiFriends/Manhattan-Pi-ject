@@ -27,13 +27,6 @@
             android:onClick="onPlayClick"
             android:id="@+id/playButton" />
 
-        <Button
-            android:text="Refresh RSSI"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="refreshRSSI"
-            android:id="@+id/refreshRSSI" />
-
         <Switch
             android:text="Poll Server"
             android:checked="true"
