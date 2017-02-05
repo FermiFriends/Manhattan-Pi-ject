@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ import java.util.TimerTask;
 
 public class DisarmBombActivity extends AppCompatActivity {
     private static final int NUM_SECONDS_FOR_READ_TIMEOUT = 10;
-    private static final int NUM_TICKS_PER_SECOND = 1000;
+    private static final int NUM_TICKS_PER_SECOND = 500;
     private static final int INVALID = -1;
     private SharedPreferences settings;
     private String server_url;
@@ -38,7 +39,7 @@ public class DisarmBombActivity extends AppCompatActivity {
         setContentView(R.layout.activity_disarm_bomb);
         settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         contactServer = settings.getBoolean("pollServer", false);
-        server_url = settings.getString("serverURL", null);
+        server_url = settings.getString("serverURL", null) + "/status";
         callAsynchronousTask();
     }
 
@@ -146,16 +147,26 @@ public class DisarmBombActivity extends AppCompatActivity {
         }
 
 
-        int temp_delta = INVALID;
+        double temp_delta = INVALID;
         int light_delta = INVALID;
+        int prox_delta = INVALID;
+        int knob_angle = INVALID;
         try {
-            temp_delta = (int) jsonObject.get("TEMP_DELTA");
-            light_delta = (int) jsonObject.get("LIGHT_DELTA");
+            temp_delta = (double) jsonObject.get("TEMP_ACTUAL_DELTA");
+            light_delta = (int) jsonObject.get("LIGHT_ACTUAL_DELTA");
+            prox_delta = (int) jsonObject.get("PROXIMITY_ACTUAL_DELTA");
+            knob_angle = (int) jsonObject.get("ACTUAL_NOB_ANGLE");
 
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
         }
-        ((TextView) findViewById(R.id.tempText)).setText(temp_delta);
-        ((TextView) findViewById(R.id.lightText)).setText(light_delta);
+        setTextViewToInt(temp_delta, R.id.tempText);
+        setTextViewToInt(light_delta, R.id.lightText);
+        setTextViewToInt(prox_delta, R.id.proxText);
+        setTextViewToInt(knob_angle, R.id.knobText);
+    }
+
+    private void setTextViewToInt(double value, int id) {
+        ((TextView) findViewById(id)).setText(String.valueOf(value));
     }
 }

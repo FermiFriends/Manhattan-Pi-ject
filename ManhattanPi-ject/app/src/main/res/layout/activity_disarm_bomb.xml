@@ -74,31 +74,23 @@
                     android:textSize="30dp" />
 
                 <TextView
-                    android:text="TextView"
+                    android:text="Proximity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="57dp"
-                    android:id="@+id/textView7"
+                    android:id="@+id/proxText"
                     android:textSize="30dp" />
 
                 <TextView
-                    android:text="TextView"
+                    android:text="Knob Angle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="57dp"
-                    android:id="@+id/textView8"
+                    android:id="@+id/knobText"
                     android:textSize="30dp" />
 
-                <TextView
-                    android:text="TextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="57dp"
-                    android:id="@+id/textView"
-                    android:textSize="30dp" />
             </LinearLayout>
         </ScrollView>
 

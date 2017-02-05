@@ -1,16 +1,34 @@
 package com.example.fermifriends.manhattanpi_ject;
 
+import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Switch;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     public static final String PREFS_NAME = "Settings";
-    private static final String SERVER_URL = "http://129.31.192.121:5000/status";
+    private static final String SERVER_URL = "http://129.31.192.121:5000";
     public static final String[] SETTING_NAMES_INTS = {
             "TIME_LIMIT",
             "TEMP_DELTA",
@@ -26,64 +44,97 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences settings;
 
 
-<<<<<<< HEAD
-=======
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if(BluetoothDevice.ACTION_FOUND.equals(action)) {
-                int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
-                String name = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
-                System.out.println(name + " => " + rssi + "dBm\n");
-            }
-        }
-    };
->>>>>>> c18f080a7121f92870a6ad91aa256209631bcfa9
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-<<<<<<< HEAD
-=======
         settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        registerReceiver(RECEIVER, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-    }
-
-    public void refreshRSSI(View view) {
-        requestPermissions(new String[] {"android.permission.BLUETOOTH", "android.permission.BLUETOOTH_ADMIN", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"}, 0);
-        BLUETOOTH_ADAPTER.startDiscovery();
->>>>>>> c18f080a7121f92870a6ad91aa256209631bcfa9
     }
 
     public void onPlayClick(View view) {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         configurePreferences(settings.edit());
         findBomb(view);
     }
 
     public void configurePreferences(SharedPreferences.Editor editor) {
-        editor.putBoolean("pollServer", ((Switch) findViewById(R.id.pollSwitch)).isChecked());
-<<<<<<< HEAD
-        editor.apply();
-=======
-        editor.putString("serverURL", SERVER_URL);
-        editor.putInt("TIME_LIMIT", 180);
-        editor.putInt("TEMP_DELTA", 4);
-        editor.putInt("TEMP_RANGE", 3);
-        editor.putInt("LIGHT_DELTA", -50);
-        editor.putInt("LIGHT_RANGE", 25);
-        editor.putInt("PINS_IN_BITS", 3);
-        editor.putInt("EXPECTED_PINS_OUT_IN_BITS", 6);
-        editor.putInt("PROXIMITY_DELTA", 200);
-        editor.putInt("PROXIMITY_RANGE", 40);
-        editor.putInt("NOB_ANGLE", 4);
+        try {
+            editor.putBoolean("pollServer", ((Switch) findViewById(R.id.pollSwitch)).isChecked());
+            editor.putString("serverURL", SERVER_URL);
+            editor.putInt("TIME_LIMIT", intFromTextEdit(R.id.timeLimitEdit));
+            editor.putInt("TEMP_DELTA", intFromTextEdit(R.id.tempDeltaEdit));
+            editor.putInt("TEMP_RANGE", intFromTextEdit(R.id.tempRangeEdit));
+            editor.putInt("LIGHT_DELTA", intFromTextEdit(R.id.lightDeltaEdit));
+            editor.putInt("LIGHT_RANGE", intFromTextEdit(R.id.lightRangeEdit));
+            editor.putInt("PINS_IN_BITS", ((SeekBar) findViewById(R.id.pinsBar)).getProgress());
+            editor.putInt("EXPECTED_PINS_OUT_IN_BITS", ((SeekBar) findViewById(R.id.pinsOutBar)).getProgress());
+            editor.putInt("PROXIMITY_DELTA", intFromTextEdit(R.id.proxDeltaEdit));
+            editor.putInt("PROXIMITY_RANGE", intFromTextEdit(R.id.proxRangeEdit));
+            editor.putInt("NOB_ANGLE", ((SeekBar) findViewById(R.id.knobBar)).getProgress());
+        } catch (NumberFormatException nfe){
+            nfe.printStackTrace();
+        }
         editor.commit();
     }
 
+    private int intFromTextEdit(int id) throws NumberFormatException {
+        String s = ((EditText) findViewById(id)).getText().toString();
+        if (s == null) {
+            s = ((EditText) findViewById(id)).getHint().toString();
+        }
+        return Integer.parseInt(s);
+    }
+
     public void findBomb(View view) {
->>>>>>> c18f080a7121f92870a6ad91aa256209631bcfa9
+        ASyncHttpPostTask aSyncHttpPostTask = new ASyncHttpPostTask();
+        aSyncHttpPostTask.execute(SERVER_URL);
         Intent intent = new Intent(this, FindBombActivity.class);
         startActivity(intent);
     }
 
+    private class ASyncHttpPostTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            return postToServer(params[0], makeJson());
+        }
+
+        private String makeJson() {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                for (String settingName : MainActivity.SETTING_NAMES_INTS) {
+                    jsonObject.put(settingName, settings.getInt(settingName, 0));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }
+            return jsonObject.toString();
+        }
+
+        private String postToServer(String desiredUrl, String json) {
+            System.out.println(json);
+            if (settings.getBoolean("pollServer", false)) {
+                try {
+                    URL url = new URL(desiredUrl);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+                    connection.setUseCaches(false);
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.connect();
+                    connection.getOutputStream();
+                    OutputStream os = connection.getOutputStream();
+                    os.write(json.getBytes("UTF-8"));
+                    os.flush();
+                    os.close();
+                    connection.getInputStream().close();
+                    return "";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+    }
 }
