@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
     public void configurePreferences(SharedPreferences.Editor editor) {
         try {
             editor.putBoolean("pollServer", ((Switch) findViewById(R.id.pollSwitch)).isChecked());
-            editor.putBoolean("useBluetooth", ((Switch)findViewById(R.id.bluetoothSwitch)).isChecked());
-            editor.putBoolean("POSTData", ((Switch)findViewById(R.id.postSwitch)).isChecked());
+            editor.putBoolean("useBluetooth", ((Switch) findViewById(R.id.bluetoothSwitch)).isChecked());
+            editor.putBoolean("POSTData", ((Switch) findViewById(R.id.postSwitch)).isChecked());
             editor.putString("serverURL", SERVER_URL);
             editor.putInt("TIME_LIMIT", intFromTextEdit(R.id.timeLimitEdit));
             editor.putInt("TEMP_DELTA", intFromTextEdit(R.id.tempDeltaEdit));

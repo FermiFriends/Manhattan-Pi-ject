@@ -13,13 +13,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +37,6 @@ public class DisarmBombActivity extends AppCompatActivity {
     private boolean doPoll = true;
     private boolean contactServer;
     private boolean gotTime = false;
-    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +141,7 @@ public class DisarmBombActivity extends AppCompatActivity {
     }
 
     private enum Attribute {
-        temp, light, prox, knob;
+        temp, light, prox, knob
     }
 
     private void updateData(String string) {
@@ -162,7 +159,7 @@ public class DisarmBombActivity extends AppCompatActivity {
         if (!gotTime) {
             try {
                 long time = (long) (settings.getInt("TIME_LIMIT", 30) - jsonObject.getDouble("TIME_ELAPSED"));
-                countDownTimer = new CountDownTimer(time * 1000, 1000) {
+                CountDownTimer countDownTimer = new CountDownTimer(time * 1000, 1000) {
                     private TextView cdt = ((TextView) findViewById(R.id.countdownText));
 
                     @Override
@@ -247,19 +244,12 @@ public class DisarmBombActivity extends AppCompatActivity {
     }
 
     private double calcTarget(double delta, double actual_delta, double range) {
-//        if (Math.abs(delta) > Math.abs(actual_delta)) {
-//            return delta - actual_delta;
-//        } else if ((actual_delta >= delta) && (actual_delta <= (delta + range))) {
-//            return 0;
-//        } else {
-//            return (delta + range) - actual_delta;
-//        }
         if ((actual_delta >= delta) && (actual_delta <= (delta + range))) {
             return 0;
         } else {
             double diff1 = delta - actual_delta;
             double diff2 = delta + range - actual_delta;
-            if(Math.abs(diff1) < Math.abs(diff2)) {
+            if (Math.abs(diff1) < Math.abs(diff2)) {
                 return diff1;
             } else {
                 return diff2;

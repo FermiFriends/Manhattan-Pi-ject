@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 
 public class FindBombActivity extends AppCompatActivity {
-    private SharedPreferences settings;
 
     public static final double MAX_DISTANCE_COMPARATOR = 10000;
     public static final double MIN_PROGRESS_TO_PROCEED = 85;
@@ -57,7 +56,7 @@ public class FindBombActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_find_bomb);
         if (settings.getBoolean("useBluetooth", false)) {
             System.out.println("VISIBILITY " + findViewById(R.id.disarmButton).getVisibility());
@@ -84,7 +83,6 @@ public class FindBombActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast pollFailToast = Toast.makeText(this, "Failed to refresh bluetooth strength", Toast.LENGTH_LONG);
             pollFailToast.show();
-            return;
         }
 
     }
