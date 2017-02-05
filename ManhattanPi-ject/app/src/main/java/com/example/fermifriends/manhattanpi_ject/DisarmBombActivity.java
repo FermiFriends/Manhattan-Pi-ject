@@ -167,22 +167,33 @@ public class DisarmBombActivity extends AppCompatActivity {
 
 
         double temp_delta = INVALID;
-        int light_delta = INVALID;
-        int prox_delta = INVALID;
+        double light_delta = INVALID;
+        double proximity_delta = INVALID;
         int knob_angle = INVALID;
         try {
             temp_delta = (double) jsonObject.get("TEMP_ACTUAL_DELTA");
             light_delta = (int) jsonObject.get("LIGHT_ACTUAL_DELTA");
-            prox_delta = (int) jsonObject.get("PROXIMITY_ACTUAL_DELTA");
+            proximity_delta = (int) jsonObject.get("PROXIMITY_ACTUAL_DELTA");
             knob_angle = (int) jsonObject.get("ACTUAL_NOB_ANGLE");
 
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
         }
-        setTextViewToInt(temp_delta, R.id.tempText);
-        setTextViewToInt(light_delta, R.id.lightText);
-        setTextViewToInt(prox_delta, R.id.proxText);
-        setTextViewToInt(knob_angle, R.id.knobText);
+        setTextViewToInt(calcTarget(settings.getInt("TEMP_DELTA", 0), temp_delta, settings.getInt("TEMP_RANGE", 0)), R.id.tempText);
+        setTextViewToInt(calcTarget(settings.getInt("LIGHT_DELTA", 0), light_delta, settings.getInt("LIGHT_RANGE", 0)), R.id.lightText);
+        setTextViewToInt(calcTarget(settings.getInt("PROXIMITY_DELTA", 0), proximity_delta, settings.getInt("PROXIMITY_RANGE", 0)), R.id.proxText);
+
+        setTextViewToInt(settings.getInt("NOB_ANGLE", 0) - knob_angle, R.id.knobText);
+    }
+
+    private double calcTarget(double delta, double actual_delta, double range) {
+        if (actual_delta <= delta) {
+            return delta - actual_delta;
+        } else if (actual_delta >= (range + delta)) {
+            return actual_delta - range - delta;
+        } else {
+            return 0.0;
+        }
     }
 
     private void setTextViewToInt(double value, int id) {

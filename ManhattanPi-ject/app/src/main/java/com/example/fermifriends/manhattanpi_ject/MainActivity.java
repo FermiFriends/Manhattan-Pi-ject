@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             s = ((EditText) findViewById(id)).getHint().toString();
         }
         return Integer.parseInt(s);
+
     }
 
 

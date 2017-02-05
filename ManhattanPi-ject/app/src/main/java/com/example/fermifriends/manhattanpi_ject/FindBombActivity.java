@@ -99,4 +99,5 @@ public class FindBombActivity extends AppCompatActivity {
 
         return Math.pow(10.0, ((double) txPower - rssi) / (10 * 2));
     }
+
 }
