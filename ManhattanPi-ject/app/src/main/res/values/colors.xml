@@ -2,8 +2,6 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorDanger">#8A0707</color>
-    <color name="colorSafe">#2DD187</color>
-    <color name="colorSignalStrength">#8A0707</color>
+    <color name="colorAccent">#2dd187</color>
+    <color name="colorSignalStrength">#287AA9</color>
 </resources>

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -23,6 +22,7 @@ public class FindBombActivity extends AppCompatActivity {
 
     public static final double MAX_DISTANCE_COMPARATOR = 10000;
     public static final double MIN_PROGRESS_TO_PROCEED = 85;
+    public static final int GREEN_COLOR = 0xFF2dd187;
 
     public static final String DEVICE_BLUETOOTH_NAME = "pynamite";
     public static final BluetoothAdapter BLUETOOTH_ADAPTER = BluetoothAdapter.getDefaultAdapter();
@@ -40,7 +40,7 @@ public class FindBombActivity extends AppCompatActivity {
                         int progress = (int) Math.floor((1 - distance / MAX_DISTANCE_COMPARATOR) * 100);
                         if (progress >= MIN_PROGRESS_TO_PROCEED) {
                             Button button = (Button) (findViewById(R.id.disarmButton));
-                            button.setBackgroundColor(Color.GREEN);
+                            button.setBackgroundColor(GREEN_COLOR);
                             button.setTextColor(Color.WHITE);
                             button.setVisibility(View.VISIBLE);
                         } else {
