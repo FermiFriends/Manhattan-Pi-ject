@@ -2,6 +2,7 @@ package com.example.fermifriends.manhattanpi_ject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -152,6 +154,10 @@ public class DisarmBombActivity extends AppCompatActivity {
         }
     }
 
+    private enum Attribute {
+        temp, light, prox, knob;
+    }
+
     private void updateData(String string) {
         JSONObject jsonObject;
         try {
@@ -179,11 +185,14 @@ public class DisarmBombActivity extends AppCompatActivity {
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
         }
-        setTextViewToInt(calcTarget(settings.getInt("TEMP_DELTA", 0), temp_delta, settings.getInt("TEMP_RANGE", 0)), R.id.tempText);
-        setTextViewToInt(calcTarget(settings.getInt("LIGHT_DELTA", 0), light_delta, settings.getInt("LIGHT_RANGE", 0)), R.id.lightText);
-        setTextViewToInt(calcTarget(settings.getInt("PROXIMITY_DELTA", 0), proximity_delta, settings.getInt("PROXIMITY_RANGE", 0)), R.id.proxText);
-
-        setTextViewToInt(settings.getInt("NOB_ANGLE", 0) - knob_angle, R.id.knobText);
+        double tempCalc = calcTarget(settings.getInt("TEMP_DELTA", 0), temp_delta, settings.getInt("TEMP_RANGE", 0));
+        double lightCalc = calcTarget(settings.getInt("LIGHT_DELTA", 0), light_delta, settings.getInt("LIGHT_RANGE", 0));
+        double proxCalc = calcTarget(settings.getInt("PROXIMITY_DELTA", 0), proximity_delta, settings.getInt("PROXIMITY_RANGE", 0));
+        int knobCalc = settings.getInt("NOB_ANGLE", 0) - knob_angle;
+        configureText(tempCalc, R.id.tempText, Attribute.temp);
+        configureText(lightCalc, R.id.lightText, Attribute.light);
+        configureText(proxCalc, R.id.proxText, Attribute.prox);
+        configureText(knobCalc, R.id.knobText, Attribute.knob);
     }
 
     private double calcTarget(double delta, double actual_delta, double range) {
@@ -196,7 +205,24 @@ public class DisarmBombActivity extends AppCompatActivity {
         }
     }
 
-    private void setTextViewToInt(double value, int id) {
-        ((TextView) findViewById(id)).setText(String.valueOf(value));
+    private void configureText(double value, int id, Attribute type) {
+        TextView textView = (TextView) findViewById(id);
+        String prefix = null;
+        switch (type) {
+            case temp: prefix = "Temperature: ";
+                break;
+            case light: prefix = "Light: ";
+                break;
+            case prox: prefix = "Proximity: ";
+                break;
+            case knob: prefix = "Knob Rotation: ";
+                break;
+        }
+        textView.setText(prefix + String.valueOf(value));
+        if (value == 0) {
+            textView.setBackgroundColor(Color.parseColor("#84ffc5"));
+        } else {
+            textView.setBackgroundColor(Color.parseColor("#db5151"));
+        }
     }
 }

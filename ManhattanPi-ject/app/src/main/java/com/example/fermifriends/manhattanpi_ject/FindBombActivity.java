@@ -77,7 +77,7 @@ public class FindBombActivity extends AppCompatActivity {
 
     //Called when the progress bar is clicked
     public void refreshRSSI(View view) {
-        requestPermissions(new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        requestPermissions(new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         try {
             BLUETOOTH_ADAPTER.startDiscovery();
         } catch (Exception e) {
