@@ -65,6 +65,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
+                <Switch
+                    android:text="POST data"
+                    android:checked="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/postSwitch"
+                    android:textSize="24dp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -72,12 +84,11 @@
                     android:id="@+id/timeLimitLayout">
 
                     <TextView
-                        android:text="TextView"
+                        android:text="Time Limit:"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/timeLimitText"
                         android:layout_weight="1"
-                        tools:text="Time Limit:"
                         android:textSize="24dp"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textAlignment="viewStart" />
@@ -106,11 +117,10 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:text="TextView"
+                        android:text="Temperature Delta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        tools:text="Temperature Delta"
                         android:textSize="24dp"
                         android:textColor="?android:attr/textColorPrimary"
                         android:id="@+id/tempDeltaText"

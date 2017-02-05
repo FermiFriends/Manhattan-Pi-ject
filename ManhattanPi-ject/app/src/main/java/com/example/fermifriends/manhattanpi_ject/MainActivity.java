@@ -45,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void onPlayClick(View view) {
         configurePreferences(settings.edit());
-        ASyncHttpPostTask aSyncHttpPostTask = new ASyncHttpPostTask();
-        aSyncHttpPostTask.execute(SERVER_URL);
+        if (settings.getBoolean("POSTData", true)) {
+            ASyncHttpPostTask aSyncHttpPostTask = new ASyncHttpPostTask();
+            aSyncHttpPostTask.execute(SERVER_URL);
+        }
         Intent intent = new Intent(this, FindBombActivity.class);
         startActivity(intent);
     }
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             editor.putBoolean("pollServer", ((Switch) findViewById(R.id.pollSwitch)).isChecked());
             editor.putBoolean("useBluetooth", ((Switch)findViewById(R.id.bluetoothSwitch)).isChecked());
+            editor.putBoolean("POSTData", ((Switch)findViewById(R.id.postSwitch)).isChecked());
             editor.putString("serverURL", SERVER_URL);
             editor.putInt("TIME_LIMIT", intFromTextEdit(R.id.timeLimitEdit));
             editor.putInt("TEMP_DELTA", intFromTextEdit(R.id.tempDeltaEdit));

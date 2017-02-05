@@ -1,12 +1,15 @@
 package com.example.fermifriends.manhattanpi_ject;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +38,8 @@ public class DisarmBombActivity extends AppCompatActivity {
     private String server_url;
     private boolean doPoll = true;
     private boolean contactServer;
+    private boolean gotTime = false;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,23 +48,6 @@ public class DisarmBombActivity extends AppCompatActivity {
         settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         contactServer = settings.getBoolean("pollServer", false);
         server_url = settings.getString("serverURL", null) + "/status";
-        CountDownTimer countDownTimer = new CountDownTimer(settings.getInt("TIME_LIMIT", 30) * 1000, 1000) {
-            private TextView cdt = ((TextView) findViewById(R.id.countdownText));
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long seconds = millisUntilFinished / 1000;
-                long minutes = seconds / 60;
-                seconds = seconds % 60;
-                cdt.setText(minutes + ":" + seconds);
-            }
-
-            @Override
-            public void onFinish() {
-                cdt.setText("KABOOM!!!");
-            }
-        };
-        countDownTimer.start();
         callAsynchronousTask();
     }
 
@@ -171,20 +159,61 @@ public class DisarmBombActivity extends AppCompatActivity {
             pollFailToast.show();
             return;
         }
+        if (!gotTime) {
+            try {
+                long time = (long) (settings.getInt("TIME_LIMIT", 30) - jsonObject.getDouble("TIME_ELAPSED"));
+                countDownTimer = new CountDownTimer(time * 1000, 1000) {
+                    private TextView cdt = ((TextView) findViewById(R.id.countdownText));
+
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        long seconds = millisUntilFinished / 1000;
+                        long minutes = seconds / 60;
+                        seconds = seconds % 60;
+                        String prefixS = "";
+                        String prefixM = "";
+                        if (seconds < 10) {
+                            prefixS = "0";
+                        }
+                        if (minutes < 10) {
+                            prefixM = "0";
+                        }
+                        cdt.setText(prefixM + minutes + ":" + prefixS + seconds);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cdt.setText("KABOOM!!!");
+                    }
+                };
+                countDownTimer.start();
+                gotTime = true;
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
 
 
         double temp_delta = INVALID;
         double light_delta = INVALID;
         double proximity_delta = INVALID;
         int knob_angle = INVALID;
+        String state = "";
         try {
             temp_delta = (double) jsonObject.get("TEMP_ACTUAL_DELTA");
             light_delta = (int) jsonObject.get("LIGHT_ACTUAL_DELTA");
             proximity_delta = (int) jsonObject.get("PROXIMITY_ACTUAL_DELTA");
             knob_angle = (int) jsonObject.get("ACTUAL_NOB_ANGLE");
+            state = jsonObject.getString("STATE");
+            System.out.println(state);
 
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
+        }
+        if (state.equals("DISARMED")) {
+            endDialog("win!!!");
+        } else if (state.equals("DETONATED")) {
+            endDialog("lose!");
         }
         double tempCalc = calcTarget(settings.getInt("TEMP_DELTA", 0), temp_delta, settings.getInt("TEMP_RANGE", 0));
         double lightCalc = calcTarget(settings.getInt("LIGHT_DELTA", 0), light_delta, settings.getInt("LIGHT_RANGE", 0));
@@ -194,6 +223,27 @@ public class DisarmBombActivity extends AppCompatActivity {
         configureText((int) lightCalc, R.id.lightText, Attribute.light);
         configureText((int) proxCalc, R.id.proxText, Attribute.prox);
         configureText(knobCalc, R.id.knobText, Attribute.knob);
+    }
+
+    private void endDialog(String state) {
+        doPoll = false;
+        contactServer = false;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("You " + state)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        backToMain();
+                    }
+                })
+                .setTitle("Game Complete!")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void backToMain() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private double calcTarget(double delta, double actual_delta, double range) {
@@ -220,7 +270,7 @@ public class DisarmBombActivity extends AppCompatActivity {
                 prefix = "Proximity: ";
                 break;
             case knob:
-                prefix = "Knob Rotation: ";
+                prefix = "Knob Angle: ";
                 break;
         }
         textView.setText(prefix + String.valueOf(value));
