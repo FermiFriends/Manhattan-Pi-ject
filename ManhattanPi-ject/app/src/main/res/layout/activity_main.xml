@@ -53,6 +53,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
+                <Switch
+                    android:text="Require Bluetooth"
+                    android:checked="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bluetoothSwitch"
+                    android:textSize="24dp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"

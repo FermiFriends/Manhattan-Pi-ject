@@ -26,7 +26,7 @@ import java.util.TimerTask;
 
 public class DisarmBombActivity extends AppCompatActivity {
     private static final int NUM_SECONDS_FOR_READ_TIMEOUT = 10;
-    private static final int NUM_TICKS_PER_SECOND = 500;
+    private static final int NUM_TICKS_PER_SECOND = 1000;
     private static final int INVALID = -1;
     private SharedPreferences settings;
     private String server_url;
@@ -61,7 +61,7 @@ public class DisarmBombActivity extends AppCompatActivity {
             }
         };
 
-        timer.schedule(getDataRegularly, NUM_TICKS_PER_SECOND);
+        timer.scheduleAtFixedRate(getDataRegularly, 0, NUM_TICKS_PER_SECOND);
     }
 
     public void startPolling(View view) {
@@ -74,6 +74,7 @@ public class DisarmBombActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
+            System.out.println("Polling server...");
             String res = "";
             try {
                 String url = params[0];
@@ -90,6 +91,7 @@ public class DisarmBombActivity extends AppCompatActivity {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(NUM_SECONDS_FOR_READ_TIMEOUT * NUM_TICKS_PER_SECOND);
+                connection.setConnectTimeout(NUM_SECONDS_FOR_READ_TIMEOUT * NUM_TICKS_PER_SECOND);
                 if (contactServer) {
                     connection.connect();
                     return connection.getInputStream();
