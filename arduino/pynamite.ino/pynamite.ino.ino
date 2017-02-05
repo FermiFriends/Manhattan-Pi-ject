@@ -30,6 +30,8 @@
 
 #define BRIGHTNESS_LED 9
 
+#define PRINT_DELAY 500
+
 // FUTURE INPUT VARIABLES
 /*
 int inputA=A5;
@@ -61,9 +63,13 @@ void loop() {
   setBrightnessLed(brightness);
   setProximityLeds(distance);
 
-  printStatus(temp, brightness, twisty, distance);
+  if (Serial.available()) {
+    Serial.read();
+    printStatus(temp, brightness, twisty, distance);  
+  }
+  
   /* Printing interval */
-  delay(500);
+  //delay(PRINT_DELAY);
 }
 
 void setBrightnessLed(int brightness) {
@@ -117,19 +123,25 @@ int calculateTwistyTurnyThing() {
 void printStatus(float temp, int brightness, int twisty, long distance)
 {
   /* Temperature */
+  
+  Serial.print("{");
   Serial.print("TEMPERATURE: ");
   Serial.print(temp);
   Serial.print(",");
   /* Brightness */
+  
   Serial.print("BRIGHTNESS: ");
   Serial.print(brightness);
   Serial.print(",");
   /* Turny twisty thing */
+  
   Serial.print("TWISTY: ");
   Serial.print(twisty);
   Serial.print(",");
   /* Proximity */
+  
   Serial.print("DISTANCE: ");
-  Serial.println(distance);
+  Serial.print(distance);
+  Serial.print("}\n");
 }
 
