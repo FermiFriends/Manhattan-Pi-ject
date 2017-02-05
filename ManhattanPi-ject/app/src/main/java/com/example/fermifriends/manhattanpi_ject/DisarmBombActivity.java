@@ -29,7 +29,8 @@ public class DisarmBombActivity extends AppCompatActivity {
     private static final int NUM_SECONDS_FOR_READ_TIMEOUT = 10;
     private static final int NUM_TICKS_PER_SECOND = 1000;
     private static final int INVALID = -1;
-    private static final String SERVER_URL = "http://129.31.192.121:5000/test";
+    private SharedPreferences settings;
+    private String server_url;
     private boolean doPoll = true;
     private boolean contactServer;
 
@@ -37,8 +38,9 @@ public class DisarmBombActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disarm_bomb);
-        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         contactServer = settings.getBoolean("pollServer", false);
+        server_url = settings.getString("serverURL", null);
         callAsynchronousTask();
     }
 
@@ -53,7 +55,7 @@ public class DisarmBombActivity extends AppCompatActivity {
                     public void run() {
                         if (doPoll) {
                             AsyncHttpTask asyncHttpTask = new AsyncHttpTask();
-                            asyncHttpTask.execute(SERVER_URL);
+                            asyncHttpTask.execute(server_url);
                         }
                     }
                 });
@@ -65,7 +67,7 @@ public class DisarmBombActivity extends AppCompatActivity {
 
     public void startPolling(View view) {
         AsyncHttpTask asyncHttpTask = new AsyncHttpTask();
-        asyncHttpTask.execute(SERVER_URL);
+        asyncHttpTask.execute(server_url);
     }
 
 
@@ -144,6 +146,7 @@ public class DisarmBombActivity extends AppCompatActivity {
             pollFailToast.show();
             return;
         }
+
 
         int temp_delta = INVALID;
         int light_delta = INVALID;
