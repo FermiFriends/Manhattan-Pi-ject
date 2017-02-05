@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,10 +21,14 @@ import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.widget.Toast.makeText;
+
 public class DisarmBombActivity extends AppCompatActivity {
     private static final int NUM_SECONDS_FOR_READ_TIMEOUT = 10;
     private static final int NUM_TICKS_PER_SECOND = 1000;
+    private static final int INVALID = -1;
     private static final String SERVER_URL = "http://129.31.192.121:5000/test";
+    private boolean doPoll = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +46,16 @@ public class DisarmBombActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        AsyncHttpTask asyncHttpTask = new AsyncHttpTask();
-                        asyncHttpTask.execute(SERVER_URL);
+                        if (doPoll) {
+                            AsyncHttpTask asyncHttpTask = new AsyncHttpTask();
+                            asyncHttpTask.execute(SERVER_URL);
+                        }
                     }
                 });
             }
         };
-        timer.scheduleAtFixedRate(getDataRegularly, 0, 1000);
+
+        timer.scheduleAtFixedRate(getDataRegularly, 0, NUM_TICKS_PER_SECOND);
     }
 
     public void getData(View view) {
@@ -113,7 +124,28 @@ public class DisarmBombActivity extends AppCompatActivity {
     }
 
     private void updateData(String string) {
-        TextView textView = (TextView) findViewById(R.id.textView);
-        textView.setText(string);
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(string);
+            doPoll = true;
+        } catch (JSONException | NullPointerException e) {
+            e.printStackTrace();
+            doPoll = false;
+            Toast pollFailToast = Toast.makeText(this, "Polling server failed - press doPoll to retry", Toast.LENGTH_LONG);
+            pollFailToast.show();
+            return;
+        }
+
+        int temp_delta = INVALID;
+        int light_delta = INVALID;
+        try {
+            temp_delta = (int) jsonObject.get("TEMP_DELTA");
+            light_delta = (int) jsonObject.get("LIGHT_DELTA");
+
+        } catch (JSONException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        ((TextView) findViewById(R.id.tempText)).setText(temp_delta);
+        ((TextView) findViewById(R.id.lightText)).setText(light_delta);
     }
 }

@@ -24,7 +24,15 @@
             android:text="Play"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="findBomb"
             android:id="@+id/playButton" />
+
+        <Button
+            android:text="Refresh RSSI"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="refreshRSSI"
+            android:id="@+id/refreshRSSI" />
 
         <Switch
             android:text="Setting 1"
@@ -57,5 +65,6 @@
             android:id="@+id/switch4"
             android:textSize="24dp"
             android:paddingTop="20dp" />
+
     </LinearLayout>
 </RelativeLayout>

@@ -26,6 +26,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.1'
     testCompile 'junit:junit:4.12'
-//    compile 'me.aflak.libraries:bluetooth:1.2.4'
+    //    compile 'me.aflak.libraries:bluetooth:1.2.4'
     compile 'com.akexorcist:bluetoothspp:1.0.0'
+    apk files('build/json-20160810.jar')
 }
