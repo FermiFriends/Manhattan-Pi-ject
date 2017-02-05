@@ -43,8 +43,9 @@ public class DisarmBombActivity extends AppCompatActivity {
         settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         contactServer = settings.getBoolean("pollServer", false);
         server_url = settings.getString("serverURL", null) + "/status";
-        CountDownTimer countDownTimer = new CountDownTimer(settings.getInt("TIME_LIMIT", 30) * 1000,1000) {
-            private TextView cdt = ((TextView)findViewById(R.id.countdownText));
+        CountDownTimer countDownTimer = new CountDownTimer(settings.getInt("TIME_LIMIT", 30) * 1000, 1000) {
+            private TextView cdt = ((TextView) findViewById(R.id.countdownText));
+
             @Override
             public void onTick(long millisUntilFinished) {
                 long seconds = millisUntilFinished / 1000;
@@ -189,9 +190,9 @@ public class DisarmBombActivity extends AppCompatActivity {
         double lightCalc = calcTarget(settings.getInt("LIGHT_DELTA", 0), light_delta, settings.getInt("LIGHT_RANGE", 0));
         double proxCalc = calcTarget(settings.getInt("PROXIMITY_DELTA", 0), proximity_delta, settings.getInt("PROXIMITY_RANGE", 0));
         int knobCalc = settings.getInt("NOB_ANGLE", 0) - knob_angle;
-        configureText(tempCalc, R.id.tempText, Attribute.temp);
-        configureText(lightCalc, R.id.lightText, Attribute.light);
-        configureText(proxCalc, R.id.proxText, Attribute.prox);
+        configureText((int) tempCalc, R.id.tempText, Attribute.temp);
+        configureText((int) lightCalc, R.id.lightText, Attribute.light);
+        configureText((int) proxCalc, R.id.proxText, Attribute.prox);
         configureText(knobCalc, R.id.knobText, Attribute.knob);
     }
 
@@ -209,13 +210,17 @@ public class DisarmBombActivity extends AppCompatActivity {
         TextView textView = (TextView) findViewById(id);
         String prefix = null;
         switch (type) {
-            case temp: prefix = "Temperature: ";
+            case temp:
+                prefix = "Temperature: ";
                 break;
-            case light: prefix = "Light: ";
+            case light:
+                prefix = "Light: ";
                 break;
-            case prox: prefix = "Proximity: ";
+            case prox:
+                prefix = "Proximity: ";
                 break;
-            case knob: prefix = "Knob Rotation: ";
+            case knob:
+                prefix = "Knob Rotation: ";
                 break;
         }
         textView.setText(prefix + String.valueOf(value));
