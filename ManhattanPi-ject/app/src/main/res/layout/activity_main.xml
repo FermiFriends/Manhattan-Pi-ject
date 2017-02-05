@@ -24,7 +24,7 @@
             android:text="Play"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="findBomb"
+            android:onClick="onPlayClick"
             android:id="@+id/playButton" />
 
         <Button
@@ -35,10 +35,11 @@
             android:id="@+id/refreshRSSI" />
 
         <Switch
-            android:text="Setting 1"
+            android:text="Poll Server"
+            android:checked="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/switch1"
+            android:id="@+id/pollSwitch"
             android:textSize="24dp"
             android:paddingTop="20dp" />
 

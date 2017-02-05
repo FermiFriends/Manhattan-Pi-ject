@@ -1,5 +1,7 @@
 package com.example.fermifriends.manhattanpi_ject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -29,11 +31,14 @@ public class DisarmBombActivity extends AppCompatActivity {
     private static final int INVALID = -1;
     private static final String SERVER_URL = "http://129.31.192.121:5000/test";
     private boolean doPoll = true;
+    private boolean contactServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disarm_bomb);
+        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        contactServer = settings.getBoolean("pollServer", false);
         callAsynchronousTask();
     }
 
@@ -55,10 +60,10 @@ public class DisarmBombActivity extends AppCompatActivity {
             }
         };
 
-        timer.scheduleAtFixedRate(getDataRegularly, 0, NUM_TICKS_PER_SECOND);
+        timer.schedule(getDataRegularly, NUM_TICKS_PER_SECOND);
     }
 
-    public void getData(View view) {
+    public void startPolling(View view) {
         AsyncHttpTask asyncHttpTask = new AsyncHttpTask();
         asyncHttpTask.execute(SERVER_URL);
     }
@@ -84,8 +89,12 @@ public class DisarmBombActivity extends AppCompatActivity {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(NUM_SECONDS_FOR_READ_TIMEOUT * NUM_TICKS_PER_SECOND);
-                connection.connect();
-                return connection.getInputStream();
+                if (contactServer) {
+                    connection.connect();
+                    return connection.getInputStream();
+                } else {
+                    return null;
+                }
             } catch (Exception e) {
                 Log.d("", e.getLocalizedMessage());
                 return null;
@@ -131,7 +140,7 @@ public class DisarmBombActivity extends AppCompatActivity {
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
             doPoll = false;
-            Toast pollFailToast = Toast.makeText(this, "Polling server failed - press doPoll to retry", Toast.LENGTH_LONG);
+            Toast pollFailToast = Toast.makeText(this, "Polling server failed - press poll to retry", Toast.LENGTH_LONG);
             pollFailToast.show();
             return;
         }
