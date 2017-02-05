@@ -247,12 +247,23 @@ public class DisarmBombActivity extends AppCompatActivity {
     }
 
     private double calcTarget(double delta, double actual_delta, double range) {
-        if(Math.abs(delta) >= Math.abs(actual_delta)) {
-            return delta - actual_delta;
-        } else if (actual_delta > delta && actual_delta < (delta+range)) {
+//        if (Math.abs(delta) > Math.abs(actual_delta)) {
+//            return delta - actual_delta;
+//        } else if ((actual_delta >= delta) && (actual_delta <= (delta + range))) {
+//            return 0;
+//        } else {
+//            return (delta + range) - actual_delta;
+//        }
+        if ((actual_delta >= delta) && (actual_delta <= (delta + range))) {
             return 0;
         } else {
-            return (delta + range) - actual_delta;
+            double diff1 = delta - actual_delta;
+            double diff2 = delta + range - actual_delta;
+            if(Math.abs(diff1) < Math.abs(diff2)) {
+                return diff1;
+            } else {
+                return diff2;
+            }
         }
     }
 
