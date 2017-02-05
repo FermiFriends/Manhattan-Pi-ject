@@ -59,14 +59,14 @@ public class FindBombActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_find_bomb);
-//        if (settings.getBoolean("useBluetooth", false)) {
+        if (settings.getBoolean("useBluetooth", false)) {
             System.out.println("VISIBILITY " + findViewById(R.id.disarmButton).getVisibility());
 
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             setIntent(registerReceiver(RECEIVER, intentFilter));
-//        } else {
-//            findViewById(R.id.disarmButton).setVisibility(View.VISIBLE);
-//        }
+        } else {
+            findViewById(R.id.disarmButton).setVisibility(View.VISIBLE);
+        }
     }
 
     //Called when the user presses the disarm button

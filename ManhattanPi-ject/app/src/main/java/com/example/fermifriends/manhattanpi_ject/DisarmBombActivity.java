@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -40,6 +41,22 @@ public class DisarmBombActivity extends AppCompatActivity {
         settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         contactServer = settings.getBoolean("pollServer", false);
         server_url = settings.getString("serverURL", null) + "/status";
+        CountDownTimer countDownTimer = new CountDownTimer(settings.getInt("TIME_LIMIT", 30) * 1000,1000) {
+            private TextView cdt = ((TextView)findViewById(R.id.countdownText));
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long seconds = millisUntilFinished / 1000;
+                long minutes = seconds / 60;
+                seconds = seconds % 60;
+                cdt.setText(minutes + ":" + seconds);
+            }
+
+            @Override
+            public void onFinish() {
+                cdt.setText("KABOOM!!!");
+            }
+        };
+        countDownTimer.start();
         callAsynchronousTask();
     }
 
@@ -143,7 +160,7 @@ public class DisarmBombActivity extends AppCompatActivity {
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
             doPoll = false;
-            Toast pollFailToast = Toast.makeText(this, "Polling server failed - press poll to retry", Toast.LENGTH_LONG);
+            Toast pollFailToast = Toast.makeText(this, "Polling server failed - press poll to retry", Toast.LENGTH_SHORT);
             pollFailToast.show();
             return;
         }

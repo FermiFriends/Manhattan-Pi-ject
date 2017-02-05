@@ -315,7 +315,7 @@
                         android:textAlignment="center"
                         android:width="100dp"
                         android:textSize="24dp"
-                        android:hint="200" />
+                        android:hint="2" />
                 </LinearLayout>
 
                 <Space
@@ -347,7 +347,7 @@
                         android:textAlignment="center"
                         android:width="100dp"
                         android:textSize="24dp"
-                        android:hint="40" />
+                        android:hint="1" />
                 </LinearLayout>
 
                 <Space
@@ -373,8 +373,8 @@
                     <SeekBar
                         style="@android:style/Widget.DeviceDefault.SeekBar"
                         android:layout_height="match_parent"
-                        android:max="360"
-                        android:progress="180"
+                        android:max="10"
+                        android:progress="3"
                         android:id="@+id/knobBar"
                         android:layout_weight="1"
                         android:layout_width="100dp" />
