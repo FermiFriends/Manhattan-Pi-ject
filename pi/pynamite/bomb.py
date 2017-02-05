@@ -1,5 +1,8 @@
+import Queue
+import threading
 import ticking
 import time
+import serial
 
 
 def start_bomb_session(options):
@@ -28,14 +31,26 @@ def start_bomb_session(options):
 
     session = {}
     session['start_time'] = time.time()
-    session['time_limit'] = options['time_limit']
-    session['ticking_stopper'] = ticking.start_ticking(session['time_limit'])
+    session['options'] = options
 
-    # reset arduino with given params
+    session['ticking_stopper'] = ticking.start_ticking(options['time_limit'])
+
+    q = Queue.Queue(maxsize=2)
+    session['serial_queue'] = q
+    stopper = threading.Event()
+    t = threading.Thread(target=arduino_serial_reader, args=(q, stopper))
+    t.start()
+    session['serial_stopper'] = stopper
+    return session
 
 def session_status(session):
 
-    # TODO: get & parse status from Arduino
+    line = session['serial_queue'].get()
+    while line == "":
+        time.sleep(1)
+        line = session['serial_queue'].get()
+
+    return line
 
     if state == "TICKING":
         pass
@@ -88,3 +103,12 @@ def kill_bomb_session(session):
 
     # TODO: do we actually need to anything to the Arduino here?
     # We can probably leave it be.
+
+
+def arduino_serial_reader(queue, stopper):
+    arduino_serial = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=5)
+    # arduino_serial.flush()
+    while not stopper.is_set():
+        arduino_serial.write('x')
+        line = arduino_serial.readline().strip()
+        queue.put(line)
