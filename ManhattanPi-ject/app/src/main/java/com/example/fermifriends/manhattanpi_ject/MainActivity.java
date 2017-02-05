@@ -1,14 +1,9 @@
 package com.example.fermifriends.manhattanpi_ject;
 
-import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -19,10 +14,7 @@ import android.widget.Switch;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -53,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void onPlayClick(View view) {
         configurePreferences(settings.edit());
-        findBomb(view);
+        ASyncHttpPostTask aSyncHttpPostTask = new ASyncHttpPostTask();
+        aSyncHttpPostTask.execute(SERVER_URL);
+        Intent intent = new Intent(this, FindBombActivity.class);
+        startActivity(intent);
     }
 
     public void configurePreferences(SharedPreferences.Editor editor) {
@@ -70,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putInt("PROXIMITY_DELTA", intFromTextEdit(R.id.proxDeltaEdit));
             editor.putInt("PROXIMITY_RANGE", intFromTextEdit(R.id.proxRangeEdit));
             editor.putInt("NOB_ANGLE", ((SeekBar) findViewById(R.id.knobBar)).getProgress());
-        } catch (NumberFormatException nfe){
+        } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
         }
         editor.commit();
@@ -78,18 +73,12 @@ public class MainActivity extends AppCompatActivity {
 
     private int intFromTextEdit(int id) throws NumberFormatException {
         String s = ((EditText) findViewById(id)).getText().toString();
-        if (s == null) {
+        if (s.equals("")) {
             s = ((EditText) findViewById(id)).getHint().toString();
         }
         return Integer.parseInt(s);
     }
 
-    public void findBomb(View view) {
-        ASyncHttpPostTask aSyncHttpPostTask = new ASyncHttpPostTask();
-        aSyncHttpPostTask.execute(SERVER_URL);
-        Intent intent = new Intent(this, FindBombActivity.class);
-        startActivity(intent);
-    }
 
     private class ASyncHttpPostTask extends AsyncTask<String, Void, String> {
 

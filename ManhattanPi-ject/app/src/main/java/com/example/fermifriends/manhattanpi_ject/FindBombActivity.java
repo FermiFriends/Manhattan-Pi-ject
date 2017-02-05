@@ -8,11 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 public class FindBombActivity extends AppCompatActivity {
@@ -21,7 +24,7 @@ public class FindBombActivity extends AppCompatActivity {
     public static final double MAX_DISTANCE_COMPARATOR = 10000;
     public static final double MIN_PROGRESS_TO_PROCEED = 85;
 
-    public static final String DEVICE_BLUETOOTH_NAME = "ubuntu-0";
+    public static final String DEVICE_BLUETOOTH_NAME = "pynamite";
     public static final BluetoothAdapter BLUETOOTH_ADAPTER = BluetoothAdapter.getDefaultAdapter();
     private final BroadcastReceiver RECEIVER = new BroadcastReceiver() {
         @Override
@@ -35,14 +38,16 @@ public class FindBombActivity extends AppCompatActivity {
                         double distance = getDistance(rssi, 0);
                         System.out.println(distance);
                         int progress = (int) Math.floor((1 - distance / MAX_DISTANCE_COMPARATOR) * 100);
-                        ((ProgressBar) findViewById(R.id.bluetoothStrengthBar)).setProgress(progress);
                         if (progress >= MIN_PROGRESS_TO_PROCEED) {
                             Button button = (Button) (findViewById(R.id.disarmButton));
+                            button.setBackgroundColor(Color.GREEN);
+                            button.setTextColor(Color.WHITE);
                             button.setVisibility(View.VISIBLE);
                         } else {
                             Button button = (Button) (findViewById(R.id.disarmButton));
                             button.setVisibility(View.INVISIBLE);
                         }
+                        ((ProgressBar) findViewById(R.id.bluetoothStrengthBar)).setProgress(progress);
                     }
                 }
             }
@@ -53,8 +58,6 @@ public class FindBombActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_bomb);
-        System.out.println("VISIBILITY " + findViewById(R.id.disarmButton).getVisibility());
-
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         setIntent(registerReceiver(RECEIVER, intentFilter));
         settings = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
@@ -69,8 +72,15 @@ public class FindBombActivity extends AppCompatActivity {
     //Called when the progress bar is clicked
     public void refreshRSSI(View view) {
         requestPermissions(new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        System.out.println("startDiscovery called on adapter");
-        BLUETOOTH_ADAPTER.startDiscovery();
+        try {
+            BLUETOOTH_ADAPTER.startDiscovery();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast pollFailToast = Toast.makeText(this, "Failed to refresh bluetooth strength", Toast.LENGTH_LONG);
+            pollFailToast.show();
+            return;
+        }
+
     }
 
     double getDistance(int rssi, int txPower) {
