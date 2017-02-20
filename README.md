@@ -1,5 +1,7 @@
 #Manhattan Pi-ject
 
+![Not a bomb](/manhattan.jpg)
+
 ###IT'S (not) A BOMB!
 The attacker hides the bomb and arms it with a custom disarm profile.
 
